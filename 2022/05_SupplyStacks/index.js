@@ -15,6 +15,42 @@ class Stack {
     const firstElement = this.elements.shift();
     return firstElement;
   }
+
+  putMultiple(stack) {
+    const length = stack.elements.length;
+
+    for (let i = 0; i < length; i++) {
+      const boxToPut = stack.get();
+      this.put(boxToPut);
+    }
+  }
+
+  getMultiple(quantity) {
+    const removedStack = new Stack();
+
+    for (let i = 0; i < quantity; i++) {
+      const removedBox = this.get();
+      removedStack.put(removedBox);
+    }
+
+    return removedStack;
+  }
+
+  copyStack() {
+    const newStack = new Stack();
+    newStack.elements = [...this.elements];
+
+    return newStack;
+  }
+}
+
+function copyStackArray (arrayToCopy) {
+  const newStackArray = [];
+  arrayToCopy.forEach(stack => {
+    newStackArray.push(stack.copyStack());
+  });
+
+  return newStackArray;
 }
 
 function addLineToStacks (stackArray, line) {
@@ -51,15 +87,23 @@ function getStrategy (line) {
   return {quantity, origin, destination};
 }
 
-function performStrategy (stackArray, strategy) {
+function performStrategy (stackArray, strategy, multiple = false) {
   let tempStackArr = [...stackArray];
 
   let {quantity, origin, destination} = strategy;
 
-  for (let i = 0; i < quantity; i++) {
-    const movedElement = tempStackArr[origin - 1].get();
-    tempStackArr[destination - 1].put(movedElement);
+  if (!multiple) {
+    for (let i = 0; i < quantity; i++) {
+      const movedElement = tempStackArr[origin - 1].get();
+      tempStackArr[destination - 1].put(movedElement);
+    }
   }
+
+  if (multiple) {
+    const movedStack = tempStackArr[origin - 1].getMultiple(quantity);
+    tempStackArr[destination - 1].putMultiple(movedStack);
+  }
+
   
   return tempStackArr;
 }
@@ -98,18 +142,27 @@ rows.forEach(row => {
   }
 });
 
+let oldStrategyStackArray = copyStackArray(stackArray);
+let newStrategyStackArray = copyStackArray(stackArray);
+
 // ----- 1 -----
 strategyArray.forEach(strategy => {
-  stackArray = performStrategy(stackArray, strategy);
+  oldStrategyStackArray = performStrategy(oldStrategyStackArray, strategy);
 });
 
-const topCrates = getTopCrates(stackArray);
+const topCrates = getTopCrates(oldStrategyStackArray);
 
 // ----- 2 -----
+strategyArray.forEach(strategy => {
+  newStrategyStackArray = performStrategy(newStrategyStackArray, strategy, true);
+});
+
+const newStrategyTopCrates = getTopCrates(newStrategyStackArray);
 
 // part one
 console.log('part one:');
 console.log(topCrates);
 
 // // part two
-// console.log('part two:');
+console.log('part two:');
+console.log(newStrategyTopCrates);
