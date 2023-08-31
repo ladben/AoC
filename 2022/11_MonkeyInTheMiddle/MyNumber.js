@@ -28,8 +28,22 @@ export default class MyNumber {
     }
   }
 
+  normalise () {
+    const value = [...this.arrRep];
+    while (value[0] === 0) {
+      value.shift();
+    }
+
+    this.setArrRep(value);
+  }
+
   add (num) {
-    const addition = new MyNumber(num);
+    let addition = undefined;
+    if (typeof num === 'number') {
+      addition = new MyNumber(num);
+    } else {
+      addition = num;
+    }
 
     const maxLength = Math.max(this.arrRep.length, addition.arrRep.length);
     this.extend(maxLength);
@@ -51,8 +65,48 @@ export default class MyNumber {
     this.setArrRep(result);
   }
 
+  subtract (num) {
+    let subtraction = undefined;
+    if (typeof num === 'number') {
+      subtraction = new MyNumber(num);
+    } else {
+      subtraction = num;
+    }
+
+    const maxLength = Math.max(this.arrRep.length, subtraction.arrRep.length);
+    this.extend(maxLength);
+    subtraction.extend(maxLength);
+
+    let remainingDigit = 0;
+    let result = [];
+
+    for (let i = this.extArrRep.length - 1; i >= 0; i--) {
+      const upperDigit = this.extArrRep[i];
+      const lowerDigit = subtraction.extArrRep[i] + remainingDigit;
+      let difference = 0;
+
+      if (upperDigit >= lowerDigit) {
+        difference = upperDigit - lowerDigit;
+        remainingDigit = 0;
+      } else {
+        difference = (10 + upperDigit) - lowerDigit;
+        remainingDigit = 1;
+      }
+
+      result.unshift(difference);
+    }
+
+    this.setArrRep(result);
+    this.normalise();
+  }
+
   multiply (num) {
-    const multiplier = new MyNumber(num);
+    let multiplier = undefined;
+    if (typeof num === 'number') {
+      multiplier = new MyNumber(num);
+    } else {
+      multiplier = num;
+    }
 
     let result = new MyNumber(0);
     for (let i = 0; i < multiplier.arrRep.length; i++) {
@@ -82,5 +136,143 @@ export default class MyNumber {
     }
     
     this.setArrRep(result.arrRep);
+  }
+
+  divisibleBy(num) {
+    // 2
+    if (num === 2) {
+      return (this.arrRep[this.arrRep.length - 1] % 2) === 0;
+    }
+
+    // 3
+    else if (num === 3) {
+      const sumOfDigits = this.arrRep.reduce((acc, curr) => acc + curr);
+      return (sumOfDigits % 3) === 0;
+    }
+
+    // 5
+    else if (num === 5) {
+      return (this.arrRep[this.arrRep.length - 1] % 5) === 0;
+    }
+
+    // 7
+    else if (num === 7) {
+      const reducedNum = new MyNumber(0);
+      const firstPart = new MyNumber(0);
+      const subtraction = new MyNumber(0);
+
+      reducedNum.setArrRep(this.arrRep);
+      while (reducedNum.arrRep.length > 2) {
+        const firstPartArr = [...reducedNum.arrRep];
+        const lastDigitArr = `${firstPartArr.pop() * 2}`.split('').map(e => Number(e));
+
+        firstPart.setArrRep(firstPartArr);
+        subtraction.setArrRep(lastDigitArr);
+
+        firstPart.subtract(subtraction);
+
+        reducedNum.setArrRep(firstPart.arrRep);
+      }
+
+      const reducedNumAsNum = Number(reducedNum.arrRep.join(''));
+      
+      return (reducedNumAsNum % 7) === 0;
+    }
+
+    // 11
+    else if (num === 11) {
+      const reducedNum = new MyNumber(0);
+      const firstPart = new MyNumber(0);
+      const subtraction = new MyNumber(0);
+
+      reducedNum.setArrRep(this.arrRep);
+      while (reducedNum.arrRep.length > 2) {
+        const firstPartArr = [...reducedNum.arrRep];
+        const lastDigitArr = `${firstPartArr.pop()}`.split('').map(e => Number(e));
+
+        firstPart.setArrRep(firstPartArr);
+        subtraction.setArrRep(lastDigitArr);
+
+        firstPart.subtract(subtraction);
+
+        reducedNum.setArrRep(firstPart.arrRep);
+      }
+
+      const reducedNumAsNum = Number(reducedNum.arrRep.join(''));
+      
+      return (reducedNumAsNum % 11) === 0;
+    }
+
+    // 13
+    else if (num === 13) {
+      const reducedNum = new MyNumber(0);
+      const firstPart = new MyNumber(0);
+      const addition = new MyNumber(0);
+
+      reducedNum.setArrRep(this.arrRep);
+      while (reducedNum.arrRep.length > 2) {
+        const firstPartArr = [...reducedNum.arrRep];
+        const lastDigitArr = `${firstPartArr.pop() * 4}`.split('').map(e => Number(e));
+
+        firstPart.setArrRep(firstPartArr);
+        addition.setArrRep(lastDigitArr);
+
+        firstPart.add(addition);
+
+        reducedNum.setArrRep(firstPart.arrRep);
+      }
+
+      const reducedNumAsNum = Number(reducedNum.arrRep.join(''));
+      
+      return (reducedNumAsNum % 13) === 0;
+    }
+
+    // 17
+    else if (num === 17) {
+      const reducedNum = new MyNumber(0);
+      const firstPart = new MyNumber(0);
+      const subtraction = new MyNumber(0);
+
+      reducedNum.setArrRep(this.arrRep);
+      while (reducedNum.arrRep.length > 2) {
+        const firstPartArr = [...reducedNum.arrRep];
+        const lastDigitArr = `${firstPartArr.pop() * 5}`.split('').map(e => Number(e));
+
+        firstPart.setArrRep(firstPartArr);
+        subtraction.setArrRep(lastDigitArr);
+
+        firstPart.subtract(subtraction);
+
+        reducedNum.setArrRep(firstPart.arrRep);
+      }
+
+      const reducedNumAsNum = Number(reducedNum.arrRep.join(''));
+      
+      return (reducedNumAsNum % 17) === 0;
+    }
+
+    // 19
+    else if (num === 19) {
+      const reducedNum = new MyNumber(0);
+      const firstPart = new MyNumber(0);
+      const addition = new MyNumber(0);
+
+      reducedNum.setArrRep(this.arrRep);
+      while (reducedNum.arrRep.length > 2) {
+        const firstPartArr = [...reducedNum.arrRep];
+        const lastDigitArr = `${firstPartArr.pop() * 2}`.split('').map(e => Number(e));
+
+        firstPart.setArrRep(firstPartArr);
+        addition.setArrRep(lastDigitArr);
+
+        firstPart.add(addition);
+
+        reducedNum.setArrRep(firstPart.arrRep);
+      }
+
+      const reducedNumAsNum = Number(reducedNum.arrRep.join(''));
+      
+      return (reducedNumAsNum % 19) === 0;
+    }
   }
 }
