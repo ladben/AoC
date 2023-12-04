@@ -17,5 +17,5 @@
     "url": "https://github.com/ladben/AoC/issues"
   },
   "homepage": "https://github.com/ladben/AoC#readme",
-  "type": "module"
+  "type": "commonjs"
 }
