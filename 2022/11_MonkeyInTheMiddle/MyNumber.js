@@ -1,5 +1,5 @@
 export default class MyNumber {
-  constructor(num) {
+  constructor (num) {
     this.arrRep = `${num}`.split('').map(e => Number(e));
     this.extArrRep = `${num}`.split('').map(e => Number(e));
   }
