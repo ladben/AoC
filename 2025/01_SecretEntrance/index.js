@@ -4,29 +4,22 @@ const rawData = fs.readFileSync('input copy.txt', {encoding: 'utf8', flag: 'r'})
 const rows = rawData.replace(/\r/g, "").split('\n');
 
 // ----- part one and two -----
-const rotate = (direction, turnValue, prevValue) => {
+const rotate = (direction, turnValue, prevValue, turn) => {
     const directionMultiplier = direction === 'L' ? -1 : 1;
-    let newValue = prevValue + (turnValue * directionMultiplier);
-    let extraTurns = 0;
+    const cleanTurnValue = turnValue % 100;
+    let turnsOverZero = 0;
+    turnsOverZero += Math.floor(turnValue / 100);
+
+    let newValue = prevValue + (cleanTurnValue * directionMultiplier);
     if (newValue < 0 || newValue > 99) {
-        extraTurns = Math.floor(newValue / 100);
-        newValue += (100 * extraTurns * -1);
+        turnsOverZero++;
+        newValue += (-100 * directionMultiplier);
     }
 
-    let turnsOverZero = 0
-    let turnsToZero = direction === 'L' ? prevValue : 100 - prevValue;
-    const leftoverTurns = turnValue - turnsToZero
-    if (leftoverTurns > 0) {
-        prevValue > 0 ? turnsOverZero++ : null;
-        (prevValue === 0 && newValue === 0) ? turnsOverZero++ : null;
-        turnsOverZero += Math.floor(leftoverTurns / 100);
-    }
-
-    if (leftoverTurns === 0) {
-        turnsOverZero = 1;
-    }
     
-    console.log("Prev value: ", prevValue, " Turn: ", direction, turnValue, " New value: ", newValue, " Turns over zero: ", turnsOverZero);
+    if (turn > 0 && turn <= 10) {
+        console.log("Prev value: ", prevValue, " Turn: ", direction, turnValue, " New value: ", newValue, " Turns over zero: ", turnsOverZero);
+    }
     return [newValue, turnsOverZero];
 }
 
@@ -35,15 +28,17 @@ let zeroCountInBetween = 0;
 let currentValue = 50;
 
 rows.forEach((row, index) => {
-    console.log("Round ", index + 1);
+    if (index >= 0 && index < 10) {
+        console.log("Round ", index + 1);
+    }
     const [_, direction, turnValueString] = row.match(/^([LR])(\d+)$/);
     const turnValue = Number(turnValueString);
-    const [newRetrievedValue, extraTurns] = rotate(direction, turnValue, currentValue);
+    const [newRetrievedValue, turnsOverZero] = rotate(direction, turnValue, currentValue, (index + 1));
     currentValue = newRetrievedValue;
+    zeroCountInBetween += turnsOverZero;
     if (currentValue === 0) {
         zeroCount++;
     }
-    zeroCountInBetween += extraTurns;
 });
 
 const answer_one = zeroCount;
