@@ -1,6 +1,7 @@
+const { dir } = require('console');
 const fs = require('fs');
 // const rawData = fs.readFileSync('testinput.txt', {encoding: 'utf8', flag: 'r'});
-const rawData = fs.readFileSync('input copy.txt', {encoding: 'utf8', flag: 'r'});
+const rawData = fs.readFileSync('input.txt', {encoding: 'utf8', flag: 'r'});
 const rows = rawData.replace(/\r/g, "").split('\n');
 
 // ----- part one and two -----
@@ -15,11 +16,13 @@ const rotate = (direction, turnValue, prevValue, turn) => {
         turnsOverZero++;
         newValue += (-100 * directionMultiplier);
     }
-
-    
-    if (turn > 0 && turn <= 10) {
-        console.log("Prev value: ", prevValue, " Turn: ", direction, turnValue, " New value: ", newValue, " Turns over zero: ", turnsOverZero);
+    if (newValue === 0 && direction === 'L') {
+        turnsOverZero++;
     }
+    if (prevValue === 0 && direction === 'L') {
+        turnsOverZero--;
+    }
+
     return [newValue, turnsOverZero];
 }
 
@@ -28,9 +31,6 @@ let zeroCountInBetween = 0;
 let currentValue = 50;
 
 rows.forEach((row, index) => {
-    if (index >= 0 && index < 10) {
-        console.log("Round ", index + 1);
-    }
     const [_, direction, turnValueString] = row.match(/^([LR])(\d+)$/);
     const turnValue = Number(turnValueString);
     const [newRetrievedValue, turnsOverZero] = rotate(direction, turnValue, currentValue, (index + 1));
